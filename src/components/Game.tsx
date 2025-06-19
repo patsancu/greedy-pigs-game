@@ -10,9 +10,11 @@ function Message({
  {
   const player1color = "#f1ff3b";
   const player2color = "#a7caff";
+  const player1Text = "Player 1";
+  const player2Text = "Player 2";
 
   function getUserColor(currentPlayer: string) {
-    if (currentPlayer === "player1") {
+    if (currentPlayer === player1Text) {
       return player1color;
     } else {
       return player2color;
@@ -27,18 +29,18 @@ function Message({
     bgColor = "red";
     textColor = "white";
     // Users have switched turns
-    const greedyPlayer = player1turn ? "player 2" : "player 1";
-    const currentPlayer = player1turn ? "player 1" : "player 2";
+    const greedyPlayer = player1turn ? player2Text : player1Text;
+    const currentPlayer = player1turn ? player1Text : player2Text;
     message = `${greedyPlayer} was too greedy! It's ${currentPlayer}'s turn`;
   } else if (lastEvent === "WIN") {
     bgColor = "lightgreen";
     // A game can only be won by a user ending their turn,
     // and having a total result bigger than the goal points,
     // which means that it will be the turn of the other player
-    const winningPlayer = player1turn ? "player 2" : "player 1";
+    const winningPlayer = player1turn ? player2Text : player1Text;
     message = `${winningPlayer} is the winner!`;
   } else if (lastEvent === "TURN") {
-    const currentPlayer = player1turn ? "player 1" : "player 2";
+    const currentPlayer = player1turn ? player1Text : player2Text;
     bgColor = getUserColor(currentPlayer);
     message = `it's ${currentPlayer}'s turn`;
   }
@@ -53,6 +55,8 @@ function Message({
 }
 
 export default function Game() {
+  const DEFAULT_POINTS_GOAL = 10;
+
   const [player1totalWins, setPlayer1totalWins] = useState(0);
   const [player2totalWins, setPlayer2totalWins] = useState(0);
   const [generatedNumber, setGeneratedNumber] = useState(0);
@@ -61,7 +65,9 @@ export default function Game() {
   const [currentTotalPlayer, setCurrentTotalPlayer] = useState(0);
   const [player1turn, setPlayer1turn] = useState(true);
   const [lastEvent, setLastEvent] = useState("NEW_GAME");
-  const POINTS_GOAL = 10;
+  const [pointsGoal, setPointsGoal] = useState(DEFAULT_POINTS_GOAL);
+  const [userPointsGoal, setUserPointsGoal] = useState(DEFAULT_POINTS_GOAL);
+
   const [currentNumberOfThrows, setCurrentNumberOfThrows] = useState(0);
 
   function getPlayerName() {
@@ -110,7 +116,7 @@ export default function Game() {
       let newTotal = totalPlayer1 + currentTotalPlayer;
       setTotalPlayer1(newTotal);
 
-      if (newTotal >= POINTS_GOAL) {
+      if (newTotal >= pointsGoal) {
         setLastEvent("WIN");
         setPlayer1totalWins(player1totalWins + 1);
         console.log(`Player 1 WON`);
@@ -119,7 +125,7 @@ export default function Game() {
     } else {
       let newTotal = totalPlayer2 + currentTotalPlayer;
       setTotalPlayer2(newTotal);
-      if (newTotal >= POINTS_GOAL) {
+      if (newTotal >= pointsGoal) {
         setPlayer2totalWins(player2totalWins + 1);
         setLastEvent("WIN");
         console.log(`Player 2 WON`);
@@ -153,13 +159,32 @@ export default function Game() {
     setGeneratedNumber(0);
   }
 
+  function randomizePlayerTurn() {
+    if (Math.random() < 0.5) {
+      setPlayer1turn(true);
+    } else {
+      setPlayer1turn(false);
+    }
+  }
+
   function resetGame() {
     clearLastEvent();
     clearCurrentTotal();
     clearLastEvent();
     clearCurrentTotalPlayer();
+    randomizePlayerTurn();
     clearTotalPlayer1();
     clearTotalPlayer2();
+  }
+
+  function handlePointGoalsChange(e: React.ChangeEvent<HTMLInputElement>) {
+    return setUserPointsGoal(parseInt(e.target.value));
+  }
+
+  function handleNewGameWithNewPoints() {
+    setPointsGoal(userPointsGoal);
+    console.log(`Creating game with new points goal of: ${userPointsGoal}`);
+    resetGame();
   }
 
   return (
@@ -170,6 +195,13 @@ export default function Game() {
                  marginRight: "auto"
                }}>
         <h1>Pigs</h1>
+        <div>Points goal: {pointsGoal}</div>
+        <div>New goal points?</div>
+        <input value={userPointsGoal}
+               onChange={handlePointGoalsChange}
+        />
+        <button onClick={handleNewGameWithNewPoints}>New game with this points goal</button>
+        <hr/>
         <div>Total wins player 1: {player1totalWins}</div>
         <div>Total wins player 2: {player2totalWins}</div>
         <hr/>
