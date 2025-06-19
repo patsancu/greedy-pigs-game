@@ -1,6 +1,13 @@
 import {useState} from "react";
 
-function Message({lastEvent, player1turn}) {
+function Message({
+                   lastEvent,
+                   player1turn,
+                 }: {
+  readonly lastEvent: string; // Replace 'string' with the actual type of lastEvent
+  readonly player1turn: boolean; // Replace 'boolean' with the actual type of player1turn
+})
+ {
   const player1color = "#f1ff3b";
   const player2color = "#a7caff";
 
