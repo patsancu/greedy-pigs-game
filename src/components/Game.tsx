@@ -177,11 +177,20 @@ export default function Game() {
   }
 
   function handlePointGoalsChange(e: React.ChangeEvent<HTMLInputElement>) {
-    return setUserPointsGoal(parseInt(e.target.value));
+    if (e.target.value === "") {
+      setUserPointsGoal(0);
+    } else {
+      setUserPointsGoal(parseInt(e.target.value));
+    }
+
   }
 
   function handleNewGameWithNewPoints() {
-    setPointsGoal(userPointsGoal);
+    if (isNaN(userPointsGoal)) {
+      setPointsGoal(0);
+    } else {
+      setPointsGoal(userPointsGoal);
+    }
     console.log(`Creating game with new points goal of: ${userPointsGoal}`);
     resetGame();
   }
