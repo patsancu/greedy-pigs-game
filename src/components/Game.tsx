@@ -104,7 +104,6 @@ export default function Game() {
       setCurrentTotalPlayer(currentTotalPlayer + newNumber);
     } else {
       setLastEvent("GREEDY");
-      // endTurn();
       clearCurrentTotal();
       switchPlayer();
       clearCurrentNumberOfThrows();
@@ -113,7 +112,7 @@ export default function Game() {
 
   function endTurn() {
     if (player1turn) {
-      let newTotal = totalPlayer1 + currentTotalPlayer;
+      const newTotal = totalPlayer1 + currentTotalPlayer;
       setTotalPlayer1(newTotal);
 
       if (newTotal >= pointsGoal) {
@@ -123,7 +122,7 @@ export default function Game() {
       }
       console.log(`Player 1 now has ${newTotal} points`);
     } else {
-      let newTotal = totalPlayer2 + currentTotalPlayer;
+      const newTotal = totalPlayer2 + currentTotalPlayer;
       setTotalPlayer2(newTotal);
       if (newTotal >= pointsGoal) {
         setPlayer2totalWins(player2totalWins + 1);
